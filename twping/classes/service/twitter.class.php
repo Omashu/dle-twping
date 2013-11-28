@@ -43,7 +43,7 @@ class Twping_Service_Twitter extends Twping_Service {
 				'status' => $target["text"]
 			)
 		));
-		var_dump($tmhOAuth);
+		
 		Twping_Twping::instance()->insert("twitter",$account,$target["text"],$target["target_type"],$target["target_id"]);
 		return (bool)$tmhOAuth;
 	}
