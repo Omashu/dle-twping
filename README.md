@@ -68,3 +68,5 @@
 ### ПОСЛЕ вставляем:
 	$twping_form->text($title)->target_id($row);
 	Twping_Twping::instance()->send($twping_form->selected(), $twping_form->target());
+
+* На сайте https://dev.twitter.com/ создать приложение с правами `read and write`, полученные ключи указать в файле конфигурации `twping/config/twping.php`
