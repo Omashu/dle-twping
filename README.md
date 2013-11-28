@@ -7,16 +7,27 @@
 * Откройте файл `engine/inc/editnews.php`
 
 ### ищем:
+	include_once ENGINE_DIR . '/classes/parse.class.php';
+
+### ПОСЛЕ вставляем:
+	require ENGINE_DIR . "/modules/twping/load.php";
+
+### ищем:
 	if( $id == $row['id'] ) $found = TRUE;
 	if( ! $found ) {
 		msg( "error", $lang['cat_error'], $lang['edit_nonews'] );
 	}
 
 ### ПОСЛЕ вставляем:
-	// twping - begin
-	require ENGINE_DIR . "/modules/twping/load.php";
 	$twping_form = Twping_Form::factory()->target_type("news")->target_id($row['id']);
-	// twping - end
+
+### ищем:
+	elseif( $action == "doeditnews" ) {
+
+		$id = intval( $_GET['id'] );
+
+### ПОСЛЕ вставляем:
+	$twping_form = Twping_Form::factory()->target_type("news")->target_id($id);
 
 ### в этом же файле ищем:
 	echo <<<HTML
