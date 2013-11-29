@@ -170,16 +170,12 @@ class Twping_Twping {
 		$query = $db->query("SELECT id AS twping_id, service AS twping_service, account AS twping_account, text AS twping_text, target_type AS twping_target_type, target_id AS twping_target_id, date_push AS twping_date_push FROM {$this->table} ORDER BY id DESC LIMIT {$offset},{$per_page}");
 
 		$results = array();
-		while ($row = $db->get_array())
-		{
-			$results[$row["twping_id"]] = $row;
-		}
-
 		$target_ids = array();
-		foreach ($results as $row)
+		while ($row = $db->get_array())
 		{
 			$row["target"] = NULL;
 			$target_ids[$row["twping_target_type"]][] = $row["twping_target_id"];
+			$results[$row["twping_id"]] = $row;
 		}
 
 		$targets = array();

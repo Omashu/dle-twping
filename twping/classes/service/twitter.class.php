@@ -33,7 +33,7 @@ class Twping_Service_Twitter extends Twping_Service {
 			'consumer_key' => $keys['consumer_key'],
 			'consumer_secret' => $keys['consumer_secret'],
 			'token' => $keys['token'],
-			'secret' => $keys['secret'],
+			'secret' => $keys['token_secret'],
 		));
 
 		$tmhOAuth->user_request(array(
@@ -43,7 +43,7 @@ class Twping_Service_Twitter extends Twping_Service {
 				'status' => $target["text"]
 			)
 		));
-		
+
 		Twping_Twping::instance()->insert("twitter",$account,$target["text"],$target["target_type"],$target["target_id"]);
 		return (bool)$tmhOAuth;
 	}
