@@ -34,7 +34,7 @@ abstract class Twping_Service {
 			throw new Twping_Exception("Invalid text");
 		}
 
-		if ($config["charset"] === "CP1251")
+		if ($config["charset"] !== "UTF-8")
 		{
 			$target["text"] = iconv($config["charset"], "UTF-8", $target["text"]);
 		}
