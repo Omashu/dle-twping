@@ -53,7 +53,7 @@ class Twping_Form {
 		{
 			// all
 			$this->services = array();
-			$config = Twping_Twping::config();
+			$config = Twping_Twping::instance()->config();
 			foreach ($config["allow_services"] as $service)
 			{
 				$this->services[$service] = isset($config["accounts"][$service])
