@@ -48,9 +48,9 @@ class Twping_Twping {
 	 * Get config
 	 * @return array
 	 */
-	public static function config()
+	public function config()
 	{
-		return Twping_Twping::instance()->config;
+		return $this->config;
 	}
 
 	/**
