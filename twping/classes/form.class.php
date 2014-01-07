@@ -22,6 +22,11 @@ class Twping_Form {
 	protected $text = NULL;
 
 	/**
+	 * @var array extra values
+	 */
+	protected $extra_values = array();
+
+	/**
 	 * @var array services
 	 */
 	protected $services = array();
@@ -73,7 +78,7 @@ class Twping_Form {
 	}
 
 	/**
-	 * Возвращает информацию о цели (для пинга)
+	 * Возвращает информацию о цели
 	 * @return array
 	 */
 	public function target()
@@ -82,6 +87,7 @@ class Twping_Form {
 			"target_type" => $this->target_type,
 			"target_id" => $this->target_id,
 			"text" => $this->text,
+			"extra" => $this->extra_values,
 		);
 	}
 
@@ -155,6 +161,40 @@ class Twping_Form {
 	}
 
 	/**
+	 * Get all extra values
+	 * @return array
+	 */
+	public function extra_values()
+	{
+		return $this->extra_values;
+	}
+
+	/**
+	 * Getter
+	 * @param string $key
+	 * @param mixed $default value
+	 * @return mixed
+	 */
+	public function get_extra_value($key,$default=NULL)
+	{
+		return isset($this->extra_values[$key])
+			? $this->extra_values[$key]
+			: $default;
+	}
+
+	/**
+	 * Setter
+	 * @param string $key
+	 * @param mixed $value
+	 * @return this
+	 */
+	public function set_extra_value($key,$value)
+	{
+		$this->extra_values[$key] = $value;
+		return $this;
+	}
+
+	/**
 	 * Генерируем форму
 	 * @return string
 	 */
@@ -176,7 +216,7 @@ class Twping_Form {
 			$form_accounts = array();
 			foreach ($accounts as $account)
 			{
-				$form_accounts[] = "<label style='color:gray;margin-right:5px;padding-right:5px;'><input type='checkbox' name='twping_selected[{$service}][]' value='{$account}' data-service='twitter' ".(!isset($selected_by_service[$account])?"checked":"")."/> {$account}</label>";
+				$form_accounts[] = "<label style='color:gray;margin-right:5px;padding-right:5px;'><input style='position:relative;top:2px;' type='checkbox' name='twping_selected[{$service}][]' value='{$account}' data-service='twitter' ".(!isset($selected_by_service[$account])?"checked":"")."/> {$account}</label>";
 			}
 
 			$form .= implode("", $form_accounts);
