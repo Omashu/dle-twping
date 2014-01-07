@@ -4,6 +4,7 @@
 * Выполнить SQL запросы из файла `additional/dump.sql` предварительно заменить слово `PREFIX` на свой реальный префикс таблиц
 * Папку `twping` переместить в `engine/modules`
 * Иконку `additional/dle_twping.png` переместить в `engine/skins/images`
+* Файл `additional/inc/dle-twping.php` переместить в `engine/inc`
 * Откройте файл `engine/inc/editnews.php`
 
 ### ищем:
@@ -30,11 +31,10 @@
 	$twping_form = Twping_Form::factory()->target_type("news")->target_id($id);
 
 ### в этом же файле ищем:
-	echo <<<HTML
-	<div class="dle_aTab" style="display:none;">
+	{$fix_br}
 
-### ПЕРЕД вставляем:
-	echo $twping_form->get_form();
+### ПОСЛЕ вставляем:
+	<br/>{$twping_form->get_form()}
 
 ### ищем примерно такое:
 	if ($item_db[6]) $db->query( "UPDATE "
@@ -55,11 +55,10 @@
 	// twping - end
 
 ### ищем:
-	echo <<<HTML
-	<div class="dle_aTab" style="display:none;">
+	{$fix_br}
 
-### ПЕРЕД вставляем:
-	echo $twping_form->get_form();
+### ПОСЛЕ вставляем:
+	<br/>{$twping_form->get_form()}
 
 ### ищем код примерно такого содержания:
 	$db->query( "INSERT INTO " . PREFIX . "_post.................');
