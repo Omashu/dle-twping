@@ -55,27 +55,12 @@ class Twping_Twping {
 
 	/**
 	 * Send
-	 * @param array $services по каким сервисам раскидать ('twitter' => array('account')), пропустить, чтобы раскидать по всем
+	 * @param array $services по каким сервисам раскидать ('twitter' => array('account'))
 	 * @param array $target инфа о материале, который пингуем array('target_type' => 'news', 'target_id' = int, 'text' => string)
-	 * @return array OR exception Twping_Exception
+	 * @return array
 	 */
 	public function send(array $services = array(), array $target = array())
 	{
-		if (empty($services))
-		{
-			foreach ($this->config["allow_services"] as $service)
-			{
-				$services[$service] = isset($this->config["accounts"][$service])
-					? array_keys($this->config["accounts"][$service])
-					: array();
-			}
-		}
-
-		if (empty($services))
-		{
-			throw new Twping_Exception("Empty services, please set the services and accounts");
-		}
-
 		$results = array();
 
 		// раскидываем сообщения
