@@ -24,6 +24,7 @@ class Twping_Twping {
 	/**
 	 * @var object database
 	 */
+	protected $db;
 
 	/**
 	 * Construct
