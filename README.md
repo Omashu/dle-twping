@@ -20,7 +20,7 @@
 	}
 
 ### ПОСЛЕ вставляем:
-	$twping_form = Twping_Form::factory()->target_type("news")->target_id($row['id']);
+	$twping_form = Twping_Form::factory()->target_type("post")->target_id($row['id']);
 
 ### ищем:
 	elseif( $action == "doeditnews" ) {
@@ -28,7 +28,7 @@
 		$id = intval( $_GET['id'] );
 
 ### ПОСЛЕ вставляем:
-	$twping_form = Twping_Form::factory()->target_type("news")->target_id($id);
+	$twping_form = Twping_Form::factory()->target_type("post")->target_id($id);
 
 ### в этом же файле ищем:
 	{$fix_br}
@@ -40,7 +40,7 @@
 	if ($item_db[6]) $db->query( "UPDATE "
 
 ### ПЕРЕД вставляем:
-	$twping_form->text($title)->target_id($item_db[0]);
+	$twping_form->target_id($item_db[0]);
 	Twping_Twping::instance()->send($twping_form->selected(), $twping_form->target());
 
 * Откройте файл `engine/inc/addnews.php`
@@ -51,7 +51,7 @@
 ### ПЕРЕД вставляем:
 	// twping - begin
 	require ENGINE_DIR . "/modules/twping/load.php";
-	$twping_form = Twping_Form::factory()->target_type("news");
+	$twping_form = Twping_Form::factory()->target_type("post");
 	// twping - end
 
 ### ищем:
@@ -65,7 +65,7 @@
 	$row = $db->insert_id();
 
 ### ПОСЛЕ вставляем:
-	$twping_form->text($title)->target_id($row);
+	$twping_form->target_id($row);
 	Twping_Twping::instance()->send($twping_form->selected(), $twping_form->target());
 
 * На сайте https://dev.twitter.com/ создать приложение с правами `read and write`, полученные ключи указать в файле конфигурации `twping/config/twping.php`
