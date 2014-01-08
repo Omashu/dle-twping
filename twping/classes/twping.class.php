@@ -22,12 +22,42 @@ class Twping_Twping {
 	protected $table;
 
 	/**
+	 * @var object database
+	 */
+
+	/**
 	 * Construct
 	 */
 	public function __construct()
 	{
+		global $db;
+		$this->db = $db;
 		$this->config = require TWPINGPATH . "config/twping.php";
 		$this->table = PREFIX . "_" . $this->config["table"];
+
+		if (isset($this->config["allow_targets"]) AND is_array($this->config["allow_targets"]))
+		{
+			foreach ($this->config["allow_targets"] as $type => &$type_data)
+			{
+				if (!isset($type_data["table"]))
+				{
+					unset($this->config["allow_targets"][$type]);
+					continue;
+				}
+
+				$type_data["table"] = PREFIX . "_" . $type_data["table"];
+
+				if (!isset($type_data["columns"]) OR !is_string($type_data["columns"]))
+				{
+					$type_data["columns"] = "*";
+				}
+
+				if (!isset($type_data["primary"]) OR !is_string($type_data["primary"]))
+				{
+					$type_data["primary"] = "id";
+				}
+			}
+		}
 	}
 
 	/**
@@ -56,7 +86,7 @@ class Twping_Twping {
 	/**
 	 * Send
 	 * @param array $services по каким сервисам раскидать ('twitter' => array('account'))
-	 * @param array $target инфа о материале, который пингуем array('target_type' => 'news', 'target_id' = int, 'text' => string)
+	 * @param array $target инфа о материале, получаем от Twping_Form target();
 	 * @return array
 	 */
 	public function send(array $services = array(), array $target = array())
@@ -70,7 +100,9 @@ class Twping_Twping {
 				$class = "Twping_Service_" . $service;
 				if (class_exists($class))
 				{
-					return call_user_func_array(array($class, "send"), array($account, $target));
+					$obj = new $class($service, $account, $target);
+					$obj->send();
+					unset($obj);
 				}
 			}, $accounts);
 		}
@@ -90,17 +122,16 @@ class Twping_Twping {
 	 */
 	public function insert($service,$account,$text,$target_type,$target_id,$date_push = NULL)
 	{
-		global $db;
 		$date_push = $date_push ? $date_push : date("Y-m-d H:i:s");
 		// mysql real escape string
-		$service = $db->safesql($service);
-		$account = $db->safesql($account);
-		$text = $db->safesql($text);
-		$target_type = $db->safesql($target_type);
+		$service = $this->db->safesql($service);
+		$account = $this->db->safesql($account);
+		$text = $this->db->safesql($text);
+		$target_type = $this->db->safesql($target_type);
 		$target_id = (int)$target_id;
-		$date_push = $db->safesql($date_push);
+		$date_push = $this->db->safesql($date_push);
 
-		return (bool)$db->query("INSERT INTO {$this->table} (
+		return (bool)$this->db->query("INSERT INTO {$this->table} (
 			service,
 			account,
 			text,
@@ -117,27 +148,50 @@ class Twping_Twping {
 	}
 
 	/**
-	 * Get by target
+	 * Проверка пинговался ли материал ранее
 	 * @param string $target_type
 	 * @param string $target_id
 	 * @return array
 	 */
 	public function check_by_target($target_type,$target_id)
 	{
-		global $db;
-
 		$target_id = (int)$target_id;
-		$target_type = $db->safesql($target_type);
+		$target_type = $this->db->safesql($target_type);
 
-		$query = $db->query("SELECT service, account FROM {$this->table} WHERE target_type = '{$target_type}' AND target_id = {$target_id}");
+		$query = $this->db->query("SELECT service, account FROM {$this->table} WHERE target_type = '{$target_type}' AND target_id = {$target_id}");
 		$results = array();
 
-		while ($row = $db->get_array())
+		while ($row = $this->db->get_array())
 		{
 			$results[$row["service"]][$row["account"]] = true;
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Получаем материал по типу и идентификатору
+	 * @param string $target_type
+	 * @param int $target_id
+	 * @return array
+	 */
+	public function get_by_target($target_type, $target_id)
+	{
+		$target_id = (int)$target_id;
+		$table = isset($this->config["allow_targets"][$target_type]["table"])
+			? $this->config["allow_targets"][$target_type]["table"]
+			: NULL;
+
+		if (!$target_id OR !$table)
+		{
+			return array();
+		}
+
+		$columns = $this->config["allow_targets"][$target_type]["columns"];
+		$primary = $this->config["allow_targets"][$target_type]["primary"];
+
+		$row = $this->db->query("SELECT {$columns} FROM {$table} WHERE {$primary} = '{$target_id}'");
+		return $this->db->get_row();
 	}
 
 	/**
@@ -148,15 +202,14 @@ class Twping_Twping {
 	 */
 	public function select($page = 1, $per_page = 25, &$count)
 	{
-		global $db;
 		$page = max(1, (int)$page);
 		$per_page = (int)$per_page;
 		$offset = ($page-1)*$per_page;
-		$query = $db->query("SELECT id AS twping_id, service AS twping_service, account AS twping_account, text AS twping_text, target_type AS twping_target_type, target_id AS twping_target_id, date_push AS twping_date_push FROM {$this->table} ORDER BY id DESC LIMIT {$offset},{$per_page}");
+		$query = $this->db->query("SELECT id AS twping_id, service AS twping_service, account AS twping_account, text AS twping_text, target_type AS twping_target_type, target_id AS twping_target_id, date_push AS twping_date_push FROM {$this->table} ORDER BY id DESC LIMIT {$offset},{$per_page}");
 
 		$results = array();
 		$target_ids = array();
-		while ($row = $db->get_array())
+		while ($row = $this->db->get_array())
 		{
 			$row["target"] = NULL;
 			$target_ids[$row["twping_target_type"]][] = $row["twping_target_id"];
@@ -171,8 +224,8 @@ class Twping_Twping {
 			$ids = array_unique($ids);
 
 			// тянем связи
-			$query = $db->query("SELECT id,title FROM ".PREFIX."_post WHERE id IN(".implode(",",$ids).")");
-			while ($row = $db->get_array())
+			$query = $this->db->query("SELECT id,title FROM ".PREFIX."_post WHERE id IN(".implode(",",$ids).")");
+			while ($row = $this->db->get_array())
 			{
 				$targets[$type][$row["id"]] = $row;
 			}
@@ -184,8 +237,8 @@ class Twping_Twping {
 			$row["target"] = isset($targets[$row["twping_target_type"]][$row["twping_target_id"]])?$targets[$row["twping_target_type"]][$row["twping_target_id"]]:NULL;
 		}
 
-		$count = $db->query("SELECT COUNT(id) AS count FROM {$this->table}");
-		$count = $db->get_row();
+		$count = $this->db->query("SELECT COUNT(id) AS count FROM {$this->table}");
+		$count = $this->db->get_row();
 		$count = $count["count"];
 
 		return $results;

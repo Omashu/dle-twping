@@ -5,30 +5,25 @@
  */
 
 class Twping_Service_Twitter extends Twping_Service {
-	/**
-	 * Send data to twiiter
-	 * @param string $account ключ аккаунта в массиве
-	 * @param array $target инфа о материале
-	 * @return boolean
-	 */
-	public static function send($account,array $target)
-	{
-		// валидируем цель
-		self::validate($target);
-		$config = Twping_Twping::instance()->config();
 
-		if (!isset($config["accounts"]["twitter"][$account]))
-		{
-			return false;
-		}
+	public function __construct($service,$account,$target)
+	{
+		parent::__construct($service,$account,$target);
 
 		if (!class_exists("tmhOAuth"))
 		{
 			require TWPINGPATH . "vendor/tmhOAuth/tmhOAuth.php";
 		}
+	}
 
-		$keys = $config["accounts"]["twitter"][$account];
-
+	/**
+	 * Send data to twiiter
+	 * @return boolean
+	 */
+	public function send()
+	{
+		return true;
+		$keys = $this->account_settings;
 		$tmhOAuth = new tmhOAuth(array(
 			'consumer_key' => $keys['consumer_key'],
 			'consumer_secret' => $keys['consumer_secret'],
@@ -40,11 +35,10 @@ class Twping_Service_Twitter extends Twping_Service {
 			'method' => 'POST',
 			'url' => $tmhOAuth->url('1.1/statuses/update'),
 			'params' => array(
-				'status' => $target["text"]
+				'status' => $this->message
 			)
 		));
-
-		Twping_Twping::instance()->insert("twitter",$account,$target["text"],$target["target_type"],$target["target_id"]);
+		
 		return (bool)$tmhOAuth;
 	}
 }

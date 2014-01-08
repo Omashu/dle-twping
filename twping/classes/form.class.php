@@ -17,9 +17,9 @@ class Twping_Form {
 	protected $target_id = NULL;
 
 	/**
-	 * @var string text
+	 * @var string array
 	 */
-	protected $text = NULL;
+	protected $target_data = array();
 
 	/**
 	 * @var array extra values
@@ -69,7 +69,7 @@ class Twping_Form {
 	}
 
 	/**
-	 * Возвращает список сервисов в конфигурации
+	 * Возвращает список сервисов в конфигурации формы
 	 * @return array
 	 */
 	public function services()
@@ -86,7 +86,7 @@ class Twping_Form {
 		return array(
 			"target_type" => $this->target_type,
 			"target_id" => $this->target_id,
-			"text" => $this->text,
+			"target_data" => $this->target_data,
 			"extra" => $this->extra_values,
 		);
 	}
@@ -125,6 +125,7 @@ class Twping_Form {
 		}
 
 		$this->target_type = (string)$value;
+		$this->target_data = Twping_Twping::instance()->get_by_target($this->target_type, $this->target_id);
 		return $this;
 	}
 
@@ -141,22 +142,41 @@ class Twping_Form {
 		}
 
 		$this->target_id = (int)$value;
+		$this->target_data = Twping_Twping::instance()->get_by_target($this->target_type, $this->target_id);
 		return $this;
 	}
 
 	/**
-	 * Getter or setter
-	 * @param mixed $value
+	 * Getter
+	 * @return array
+	 */
+	public function target_data()
+	{
+		return $this->target_data;
+	}
+	
+	/**
+	 * Getter
+	 * @param string $key
+	 * @param mixed $default value
 	 * @return mixed
 	 */
-	public function text($value = NULL)
+	public function get_target_data($key,$default=NULL)
 	{
-		if (is_null($value))
-		{
-			return $this->text;
-		}
+		return isset($this->target_data[$key])
+			? $this->target_data[$key]
+			: $default;
+	}
 
-		$this->text = (string)$value;
+	/**
+	 * Setter
+	 * @param string $key
+	 * @param mixed $value
+	 * @return this
+	 */
+	public function set_target_data($key,$value=NULL)
+	{
+		$this->target_data[$key] = $value;
 		return $this;
 	}
 
