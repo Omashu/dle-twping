@@ -220,11 +220,12 @@ class Twping_Twping {
 		foreach ($target_ids as $type => $ids)
 		{
 			$targets[$type] = array();
-			if (!count($ids)) continue;
+			if (!count($ids) OR !isset($this->config["allow_targets"][$type]["table"])) continue;
 			$ids = array_unique($ids);
 
 			// тянем связи
-			$query = $this->db->query("SELECT id,title FROM ".PREFIX."_post WHERE id IN(".implode(",",$ids).")");
+			$table = $this->config["allow_targets"][$type]["table"];
+			$query = $this->db->query("SELECT * FROM {$table} WHERE id IN(".implode(",",$ids).")");
 			while ($row = $this->db->get_array())
 			{
 				$targets[$type][$row["id"]] = $row;
