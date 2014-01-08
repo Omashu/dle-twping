@@ -17,16 +17,16 @@ $twping["allow_targets"]["post"]["columns"] = "*";
 $twping["allow_targets"]["post"]["primary"] = "id";
 
 /*настройка аккаунтов сервисов*/
-$twping["accounts"]["twitter"]["acc1_youkey"]["consumer_key"] 		= "value";
-$twping["accounts"]["twitter"]["acc1_youkey"]["consumer_secret"] 	= "value";
-$twping["accounts"]["twitter"]["acc1_youkey"]["token"] 						= "value";
-$twping["accounts"]["twitter"]["acc1_youkey"]["token_secret"] 		= "value";
+$twping["accounts"]["twitter"]["acc1_youkey"]["consumer_key"] = "value";
+$twping["accounts"]["twitter"]["acc1_youkey"]["consumer_secret"] = "value";
+$twping["accounts"]["twitter"]["acc1_youkey"]["token"] = "value";
+$twping["accounts"]["twitter"]["acc1_youkey"]["token_secret"] = "value";
 
 // пример для подключения второго аккаунта
-// $twping["accounts"]["twitter"]["acc2_youkey"]["consumer_key"] 			= "value";
-// $twping["accounts"]["twitter"]["acc2_youkey"]["consumer_secret"] 	= "value";
-// $twping["accounts"]["twitter"]["acc2_youkey"]["token"] 						= "value";
-// $twping["accounts"]["twitter"]["acc2_youkey"]["token_secret"] 			= "value";
+// $twping["accounts"]["twitter"]["acc2_youkey"]["consumer_key"] = "value";
+// $twping["accounts"]["twitter"]["acc2_youkey"]["consumer_secret"] = "value";
+// $twping["accounts"]["twitter"]["acc2_youkey"]["token"] = "value";
+// $twping["accounts"]["twitter"]["acc2_youkey"]["token_secret"] = "value";
 
 /**
  * настройка текстовых сообщений
