@@ -225,7 +225,8 @@ class Twping_Twping {
 
 			// тянем связи
 			$table = $this->config["allow_targets"][$type]["table"];
-			$query = $this->db->query("SELECT * FROM {$table} WHERE id IN(".implode(",",$ids).")");
+			$primary = $this->config["allow_targets"][$type]["primary"];
+			$query = $this->db->query("SELECT * FROM {$table} WHERE {$primary} IN(".implode(",",$ids).")");
 			while ($row = $this->db->get_array())
 			{
 				$targets[$type][$row["id"]] = $row;
