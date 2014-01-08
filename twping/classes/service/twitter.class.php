@@ -22,7 +22,6 @@ class Twping_Service_Twitter extends Twping_Service {
 	 */
 	public function send()
 	{
-		return true;
 		$keys = $this->account_settings;
 		$tmhOAuth = new tmhOAuth(array(
 			'consumer_key' => $keys['consumer_key'],
