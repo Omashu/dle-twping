@@ -49,10 +49,8 @@
 	if( $action == "addnews" ) {
 
 ### ПЕРЕД вставляем:
-	// twping - begin
 	require ENGINE_DIR . "/modules/twping/load.php";
 	$twping_form = Twping_Form::factory()->target_type("post");
-	// twping - end
 
 ### ищем:
 	{$fix_br}
